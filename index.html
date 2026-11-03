@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A Little Question for You</title>
+  <style>
+    :root {
+      --pink: #f7a9c4;
+      --dark-pink: #c94f7c;
+      --ease: cubic-bezier(.2, .8, .2, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: #522b3a;
+      font-family: Georgia, serif;
+      background: linear-gradient(135deg, #fff1f6, #f8d9e7);
+    }
+
+    .content {
+      width: min(100%, 520px);
+      padding: 36px 24px;
+      text-align: center;
+      background: #fffafc;
+      border: 1px solid #f3cada;
+      border-radius: 24px;
+      box-shadow: 0 18px 50px #8c46601a;
+    }
+
+    h1 { margin-top: 0; }
+
+    .envelope {
+      margin: 24px 0;
+      font-size: 76px;
+      line-height: 1;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 999px;
+      color: white;
+      background: var(--dark-pink);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { filter: brightness(1.08); }
+    button:focus-visible { outline: 3px solid #54253a; outline-offset: 3px; }
+
+    .window {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: #32162299;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(.96);
+      transition: opacity .4s ease, transform .55s var(--ease),
+                  visibility .4s;
+    }
+
+    .window.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    .letter {
+      position: relative;
+      width: min(100%, 460px);
+      padding: 36px 28px;
+      text-align: center;
+      background: #fffafc;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px #0003;
+    }
+
+    .close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 12px;
+      color: #522b3a;
+      background: #f8e3ec;
+    }
+
+    .choices {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .secondary { color: #522b3a; background: #f8e3ec; }
+
+    .cat-heart {
+      position: absolute;
+      top: 12px;
+      left: 18px;
+      z-index: 3;
+      width: 26px;
+      height: 26px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .content.is-won .cat-heart {
+      opacity: 1;
+      animation: floatHeart 1.8s ease-in-out infinite;
+    }
+
+    @keyframes floatHeart {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.15); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="content" id="content">
+    <span class="cat-heart" aria-hidden="true">💖</span>
+    <h1>A little question for you…</h1>
+    <p>I made something special. Open it when you're ready.</p>
+    <div class="envelope" aria-hidden="true">💌</div>
+    <button id="openButton">Open my letter</button>
+  </main>
+
+  <div class="window" id="letterWindow" aria-hidden="true">
+    <section class="letter" role="dialog" aria-modal="true"
+             aria-labelledby="letterTitle">
+      <button class="close" id="closeButton" aria-label="Close letter">×</button>
+      <h2 id="letterTitle">To my favorite person,</h2>
+      <p>
+        You make my days brighter, and I love all the little moments we share.
+        I feel lucky to have you in my life.
+      </p>
+      <h2>Will you be my boyfriend?</h2>
+      <div class="choices">
+        <button id="yesButton">Yes! 💕</button>
+        <button class="secondary" id="thinkButton">I need a little time</button>
+      </div>
+      <p id="reply" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <script>
+    const content = document.querySelector("#content");
+   
